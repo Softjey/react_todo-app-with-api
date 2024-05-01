@@ -4,7 +4,7 @@ import React, {
 import { TodosContext } from '../../contexts/TodosContext';
 
 export const NewTodoField: React.FC = () => {
-  const { addTodo, setError } = useContext(TodosContext);
+  const { addTodo, setError, userId } = useContext(TodosContext);
   const [title, setTitle] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const titleField = useRef<null | HTMLInputElement>(null);
@@ -28,7 +28,7 @@ export const NewTodoField: React.FC = () => {
     const newTodo = {
       title: trimmedTitle,
       completed: false,
-      userId: 12058,
+      userId: +userId!,
       id: 0,
     };
 
