@@ -1,24 +1,29 @@
 import { Todo, TodoID, TodoUpdate } from '../types/Todo';
 import { client } from '../utils/fetchClient';
 
-const USER_ID = 12058;
+export class ApiClient {
+  public USER_ID: string;
 
-const URL_PATH = `/todos?userId=${USER_ID}`;
+  public URL_PATH: string;
 
-export const getTodos = () => {
-  return client.get<Todo[]>(URL_PATH);
-};
+  constructor(userId: string) {
+    this.USER_ID = userId;
+    this.URL_PATH = `/todos?userId=${userId}`;
+  }
 
-export const addTodo = (newTodo: Omit<Todo, 'id'>) => {
-  return client.post<Todo>(URL_PATH, newTodo);
-};
+  getTodos() {
+    return client.get<Todo[]>(this.URL_PATH);
+  }
 
-export const deleteTodo = (todoID: TodoID) => {
-  return client.delete(`/todos/${todoID}?userId=${USER_ID}`);
-};
+  addTodo(newTodo: Omit<Todo, 'id'>) {
+    return client.post<Todo>(this.URL_PATH, newTodo);
+  }
 
-export const updateTodo = (todo: TodoUpdate) => {
-  return client.patch<Todo>(`/todos/${todo.id}?userId=${USER_ID}`, todo);
-};
+  deleteTodo(todoID: TodoID) {
+    return client.delete(`/todos/${todoID}?userId=${this.USER_ID}`);
+  }
 
-// Add more methods here
+  updateTodo(todo: TodoUpdate) {
+    return client.patch<Todo>(`/todos/${todo.id}?userId=${this.USER_ID}`, todo);
+  }
+}

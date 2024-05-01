@@ -1,15 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+// eslint-disable-next-line object-curly-newline
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Todo, TodoID, TodoUpdate } from '../types/Todo';
 import { TodosFilterQuery } from '../constants';
 import getPreparedTodos from '../utils/getPreparedTodos';
-import {
-  getTodos,
-  addTodo as addTodoOnServer,
-  deleteTodo as deleteTodoOnServer,
-  updateTodo as updateTodoOnServer,
-} from '../api/todos';
+import { ApiClient } from '../api/todos';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 interface TodosContextType {
+  userId: string | null;
   todos: Todo[],
   activeTodos: Todo[],
   completedTodos: Todo[],
@@ -17,6 +15,7 @@ interface TodosContextType {
   query: TodosFilterQuery,
   error: string,
   tempTodo: null | Todo,
+  setUserId: (newUserId: string) => void,
   addTodo: ((newTodo: Todo) => Promise<void>) | null,
   deleteTodo: ((todoID: TodoID) => Promise<void>) | null,
   updateTodo: ((todo: TodoUpdate) => Promise<void>) | null,
@@ -25,6 +24,7 @@ interface TodosContextType {
 }
 
 export const TodosContext = React.createContext<TodosContextType>({
+  userId: null,
   todos: [],
   activeTodos: [],
   completedTodos: [],
@@ -35,6 +35,7 @@ export const TodosContext = React.createContext<TodosContextType>({
   addTodo: null,
   deleteTodo: null,
   updateTodo: null,
+  setUserId: () => { },
   setQuery: () => { },
   setError: () => { },
 });
@@ -42,16 +43,24 @@ export const TodosContext = React.createContext<TodosContextType>({
 export const TodosProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [userId, setUserId] = useLocalStorage('userId');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [query, setQuery] = useState(TodosFilterQuery.all);
   const [error, setError] = useState('');
+  const apiClient = useRef<ApiClient | null>(null);
 
   useEffect(() => {
-    getTodos()
+    if (!userId) {
+      return;
+    }
+
+    apiClient.current = new ApiClient(userId);
+
+    apiClient.current.getTodos()
       .then(setTodos)
-      .catch(() => setError('Something went wrong. Failed to load todos'));
-  }, []);
+      .catch(() => setUserId(null));
+  }, [userId, setUserId]);
 
   const preparedTodos = useMemo(
     () => getPreparedTodos(todos, query),
@@ -75,7 +84,7 @@ export const TodosProvider: React.FC<{ children: React.ReactNode }> = ({
   const addTodo = (newTodo: Todo) => {
     setTempTodo(newTodo);
 
-    return addTodoOnServer(newTodo)
+    return apiClient.current!.addTodo(newTodo)
       .then((newTodoFromServer) => {
         setTodos(prevTodos => [...prevTodos, newTodoFromServer]);
       })
@@ -83,7 +92,7 @@ export const TodosProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateTodo = (todoToUpdate: TodoUpdate) => {
-    return updateTodoOnServer(todoToUpdate)
+    return apiClient.current!.updateTodo(todoToUpdate)
       .then(updatedTodo => {
         setTodos(prevTodos => (
           prevTodos.map(todo => (
@@ -94,7 +103,7 @@ export const TodosProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const deleteTodo = (todoID: TodoID) => {
-    return deleteTodoOnServer(todoID)
+    return apiClient.current!.deleteTodo(todoID)
       .then(() => {
         setTodos(prevTodos => (
           prevTodos.filter(todo => todo.id !== todoID)
@@ -104,6 +113,7 @@ export const TodosProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const value: TodosContextType = {
+    userId,
     todos,
     activeTodos,
     completedTodos,
@@ -116,6 +126,7 @@ export const TodosProvider: React.FC<{ children: React.ReactNode }> = ({
     deleteTodo,
     setQuery,
     setError,
+    setUserId,
   };
 
   return (

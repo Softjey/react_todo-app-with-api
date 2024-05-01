@@ -5,9 +5,14 @@ import Main from '../Main';
 import Footer from '../Footer';
 import Notification from '../Notification';
 import { TodosContext } from '../../contexts/TodosContext';
+import { UserWarning } from '../../UserWarning';
 
 export const TodoApp: React.FC = () => {
-  const { todos } = useContext(TodosContext);
+  const { todos, userId } = useContext(TodosContext);
+
+  if (!userId) {
+    return <UserWarning />;
+  }
 
   return (
     <div className="todoapp">
