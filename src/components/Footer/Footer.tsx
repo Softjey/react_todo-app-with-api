@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Filters from '../../Filters';
+import Filters from '../Filters';
 import ClearButton from '../ClearButton';
 import TodosCounter from '../TodosCounter';
 
