@@ -1,48 +1,31 @@
-# React Todo App with API (complete)
+TodoApp
+=======
 
-It is the third part of the React Todo App with API.
+Description
+-----------
 
-Take your code implemented for [Add and Delete](https://github.com/mate-academy/react_todo-app-add-and-delete)
-and implement the ability to toggle and rename todos.
+The TodoApp is a simple yet powerful application designed to help users manage their tasks efficiently. It features a straightforward authentication form and a list of todos that is synchronized with a server. The application focuses on providing a user-friendly interface to enhance productivity and task management.
 
-> Here is [the working example](https://mate-academy.github.io/react_todo-app-with-api/)
+Technologies Used
+-----------------
 
-## Toggling a todo status
+*   React - A JavaScript library for building user interfaces.
+*   Context API - React's own state management tool to manage state across the application.
 
-Toggle the `completed` status on `TodoStatus` change:
+Project Preview
+---------------
 
-- covered the todo with a loader overlay while waiting for API response;
-- the status should be changed on success;
-- show the `Unable to update a todo` notification in case of API error.
+Visit the live preview of the TodoApp to see it in action: [Live Preview](https://softjey.github.io/react_todo-app-with-api/)
 
-Add the ability to toggle the completed status of all the todos with the `toggleAll` checkbox:
+Launch Instructions
+-------------------
 
-- `toggleAll` button should have `active` class only if all the todos are completed;
-- `toggleAll` click changes its status to the opposite one, and sets this new status to all the todos;
-- it should work the same as several individual updates of the todos which statuses were actually changed;
-- do send requests for the todos that were not changed;
+To run the project locally, follow these steps:
 
-## Renaming a todo
+1.  Clone the repository: `git clone https://github.com/softjey/react_todo-app-with-api.git`
+2.  Install dependencies: `npm install`
+3.  Start the development server: `npm start`
 
-Implement the ability to edit a todo title on double click:
+Open `http://localhost:3000` to view it in the browser.
 
-- show the edit form instead of the title and remove button;
-- saves changes on the form submit (just press `Enter`);
-- save changes when the field loses focus (`onBlur`);
-- if the new title is the same as the old one just cancel editing;
-- cancel editing on `Esс` key `keyup` event;
-- if the new title is empty delete the todo the same way the `x` button does it;
-- if the title was changed show the loader while waiting for the API response;
-- update the todo title on success;
-- show `Unable to update a todo` in case of API error;
-- or the deletion error message if we tried to delete the todo.
-
-## If you want to enable tests
-- open `cypress/integration/page.spec.js`
-- replace `describe.skip` with `describe` for the root `describe`
-
-## Instructions
-
-- Implement a solution following the [React task guideline](https://github.com/mate-academy/react_task-guideline#react-tasks-guideline).
-- Use the [React TypeScript cheat sheet](https://mate-academy.github.io/fe-program/js/extra/react-typescript).
-- Replace `<your_account>` with your Github username in the [DEMO LINK](https://<your_account>.github.io/react_todo-app-with-api/) and add it to the PR description.
+Thank you for checking out our TodoApp project!
